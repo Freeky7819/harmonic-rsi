@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.DS_Store
+.venv/
+.env
+dist/
+build/
+*.egg-info/
+.idea/
+.vscode/
+memory.jsonl
