@@ -1,3 +1,9 @@
+﻿# ------------------------------------------------------------------------------
+# Harmonic RSI — Research Edition (v0.2.0)
+# Licensed under CC BY-NC 4.0 (non-commercial use only)
+# © Damjan Žakelj 2025 — Harmonic Logos / ISM-X Framework
+# ------------------------------------------------------------------------------
+
 
 import json, os
 from .providers import OpenAIProvider, OllamaProvider
@@ -31,7 +37,7 @@ def main():
     open("agent_report.json", "w", encoding="utf-8").write(json.dumps(report, ensure_ascii=False, indent=2))
 
     final_text = report.get("final_text", "")
-    print("\n🧠 Final Answer:\n", final_text or "(none)")
+    print("\nđź§  Final Answer:\n", final_text or "(none)")
     if final_text:
         open("agent_final.txt", "w", encoding="utf-8").write(final_text)
 

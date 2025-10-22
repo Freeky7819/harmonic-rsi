@@ -1,3 +1,9 @@
+﻿# ------------------------------------------------------------------------------
+# Harmonic RSI — Research Edition (v0.2.0)
+# Licensed under CC BY-NC 4.0 (non-commercial use only)
+# © Damjan Žakelj 2025 — Harmonic Logos / ISM-X Framework
+# ------------------------------------------------------------------------------
+
 # -*- coding: utf-8 -*-
 # harmonic_rsi/app_gradio.py
 from __future__ import annotations
@@ -14,7 +20,7 @@ from harmonic_rsi import ISMField, ISMConfig, ResonanceEvaluator, ResonanceParam
 # ---- helpers -----------------------------------------------------------------
 
 def _synth_critic(res: dict, est: dict, steps: list[str]) -> str:
-    """Če agent ne vrne kritike, jo naredimo iz metrik in korakov."""
+    """ÄŚe agent ne vrne kritike, jo naredimo iz metrik in korakov."""
     rsi   = float(res.get("resonance_score", 0.0))
     rsig  = float(res.get("resonance_signature", 0.0))
     drift = float(res.get("phase_drift", 1.0))
@@ -22,12 +28,12 @@ def _synth_critic(res: dict, est: dict, steps: list[str]) -> str:
     r2    = float(est.get("r2", 0.0))
 
     notes = []
-    notes.append(f"*RSIG={rsig:.3f}, R²={r2:.3f}, RSI={rsi:.3f}, DRIFT={drift:.3f}, COH={coh:.3f}*")
-    if rsig < 0.60: notes.append("- Povečaj semantično konsistenco med koraki (prehodni stavki, manj topic skokov).")
-    if r2   < 0.60: notes.append("- Fazna ocena ni stabilna → poskusi manj korakov ali drugačen red.")
-    if rsi  < 0.55: notes.append("- Koraki so premalo resonantni → bolj konkretne, manj “mehke” akcije.")
-    if drift> 0.70: notes.append("- Prevelik DRIFT → koraki naj bodo bolj medsebojno odvisni.")
-    if coh  < 0.50: notes.append("- COH nizka → dodaj povzetke med koraki, da držiš rdečo nit.")
+    notes.append(f"*RSIG={rsig:.3f}, RÂ˛={r2:.3f}, RSI={rsi:.3f}, DRIFT={drift:.3f}, COH={coh:.3f}*")
+    if rsig < 0.60: notes.append("- PoveÄŤaj semantiÄŤno konsistenco med koraki (prehodni stavki, manj topic skokov).")
+    if r2   < 0.60: notes.append("- Fazna ocena ni stabilna â†’ poskusi manj korakov ali drugaÄŤen red.")
+    if rsi  < 0.55: notes.append("- Koraki so premalo resonantni â†’ bolj konkretne, manj â€śmehkeâ€ť akcije.")
+    if drift> 0.70: notes.append("- Prevelik DRIFT â†’ koraki naj bodo bolj medsebojno odvisni.")
+    if coh  < 0.50: notes.append("- COH nizka â†’ dodaj povzetke med koraki, da drĹľiĹˇ rdeÄŤo nit.")
     if steps:
         notes.append("- Kritika korakov:")
         for i, s in enumerate(steps[:6], 1):
@@ -36,11 +42,11 @@ def _synth_critic(res: dict, est: dict, steps: list[str]) -> str:
     
 
 def _synth_final(steps: list[str]) -> str:
-    """Če agent ne vrne finalnega odgovora, naredimo kratek “executive summary” iz korakov."""
+    """ÄŚe agent ne vrne finalnega odgovora, naredimo kratek â€śexecutive summaryâ€ť iz korakov."""
     if not steps:
         return "No final answer."
     bullets = "\n".join(f"- {s}" for s in steps[:10])
-    return f"**Summary (auto):**\n{bullets}\n\n*(Auto-synth zaradi manjkajočega final_text v agentovem izhodu.)*"
+    return f"**Summary (auto):**\n{bullets}\n\n*(Auto-synth zaradi manjkajoÄŤega final_text v agentovem izhodu.)*"
 
 
 def _badge_html(label: str, color: str, res: dict, est: dict) -> str:
@@ -56,7 +62,7 @@ def _badge_html(label: str, color: str, res: dict, est: dict) -> str:
     )
     nums = (
         f'<div style="margin-top:6px;font-family:monospace">'
-        f'RSIG={rsig:.3f} Â· RÂ˛={r2:.3f} Â· RSI={rsi:.3f} Â· DRIFT={drift:.3f} Â· COH={coh:.3f}'
+        f'RSIG={rsig:.3f} Ă‚Â· RĂ‚Ë›={r2:.3f} Ă‚Â· RSI={rsi:.3f} Ă‚Â· DRIFT={drift:.3f} Ă‚Â· COH={coh:.3f}'
         f'</div>'
     )
     return pill + nums
@@ -77,14 +83,14 @@ def classify_stability(res: dict, est: dict) -> str:
 
 def _eval_trace(steps: list[str], emb: np.ndarray, mode: str = "resonant"):
     """
-    Skupna pot: ISM fit → ocena faze → RSI → DataFrame za grafa.
+    Skupna pot: ISM fit â†’ ocena faze â†’ RSI â†’ DataFrame za grafa.
     steps: seznam korakov (N)
     emb:   matrika embeddingov oblike (N, D)
     """
     # 1) zgradi minimalni trace, ki ga ISMField zna prebrati
     trace = {
         "steps": steps,
-        "final_text": "",                   # v Evaluate nimamo končnega odgovora
+        "final_text": "",                   # v Evaluate nimamo konÄŤnega odgovora
         "embeddings": emb.tolist(),         # numpy -> list (json-serializable)
     }
 
@@ -92,8 +98,8 @@ def _eval_trace(steps: list[str], emb: np.ndarray, mode: str = "resonant"):
     cfg = ISMConfig(alpha=0.08, use_log_time=True)
     field = ISMField(cfg).fit(trace)
     est = field.estimate_phase()           # dict z "omega", "phi", "r2"
-    Phi = field.signal()                   # Φ(t)
-    dPhi = field.dphi()                    # ∂Φ/∂t
+    Phi = field.signal()                   # Î¦(t)
+    dPhi = field.dphi()                    # â‚Î¦/â‚t
 
     # 3) RSI ocena
     ev = ResonanceEvaluator()
@@ -105,8 +111,8 @@ def _eval_trace(steps: list[str], emb: np.ndarray, mode: str = "resonant"):
 
     # 4) podatki za grafa
     x = list(range(1, len(Phi) + 1))
-    df_phi  = pd.DataFrame({"x": x, "Φ(t)":  [float(v) for v in Phi]})
-    df_dphi = pd.DataFrame({"x": x, "∂Φ/∂t": [float(v) for v in dPhi]})
+    df_phi  = pd.DataFrame({"x": x, "Î¦(t)":  [float(v) for v in Phi]})
+    df_dphi = pd.DataFrame({"x": x, "â‚Î¦/â‚t": [float(v) for v in dPhi]})
 
     return res, est, df_phi, df_dphi, trace
 
@@ -119,10 +125,10 @@ def _tmp_write(text: str, fname: str) -> str|None:
         f.write(text)
     return p
 
-# ---- Evaluate tab (Prompt â†’ GPT â†’ Embeddings â†’ ISM â†’ RSI) --------------------
+# ---- Evaluate tab (Prompt Ă˘â€ â€™ GPT Ă˘â€ â€™ Embeddings Ă˘â€ â€™ ISM Ă˘â€ â€™ RSI) --------------------
 
 def _openai_steps(api_key: str, chat_model: str, steps_n: int, prompt: str) -> list[str]:
-    """Vrne numbered korake (brez verige razmiĹˇljanja)."""
+    """Vrne numbered korake (brez verige razmiÄąË‡ljanja)."""
     from openai import OpenAI
     client = OpenAI(api_key=api_key)
 
@@ -151,7 +157,7 @@ def _openai_steps(api_key: str, chat_model: str, steps_n: int, prompt: str) -> l
     lines = [ln.strip() for ln in text.splitlines() if ln.strip()]
     cleaned: list[str] = []
     for ln in lines:
-        # odstrani bullets/Ĺˇtevilke
+        # odstrani bullets/ÄąË‡tevilke
         ln = ln.lstrip("-* ").lstrip("0123456789").lstrip(".)").strip()
         if ln:
             cleaned.append(ln)
@@ -190,7 +196,7 @@ def run_from_prompt(api_key, chat_model, emb_model, steps_n, user_prompt, mode):
         trace_path  = _tmp_write(trace_json,  "trace.json")
         report_path = _tmp_write(report_json, "report.json")
 
-        # 5. Diagnostični izpisi
+        # 5. DiagnostiÄŤni izpisi
         diag_html = classify_stability(res, est)
         steps_txt = "\n".join(f"{i+1}. {s}" for i, s in enumerate(steps))
 
@@ -245,7 +251,7 @@ def run_meta_agent(
             else OllamaProvider(base_url=ollama_url, chat_model=chat_model, emb_model=emb_model)
         )
 
-        # 2) poženi agent(a)
+        # 2) poĹľeni agent(a)
         if adaptive:
             agent = AdaptiveResearcherAgent(prov, steps_n=int(steps_n), mode=mode)
             cfg = AdaptConfig(
@@ -261,7 +267,7 @@ def run_meta_agent(
             res       = block.get("rsi", {})
             est       = block.get("ism_phase", {})
             critic    = out.get("critic", "")            # <-- pri adaptivu je kritik na top-level
-            final_txt = ""                               # adaptive običajno ne vrne final_text
+            final_txt = ""                               # adaptive obiÄŤajno ne vrne final_text
             trace_obj = out.get("trace", {})
         else:
             agent = ResearcherAgent(prov, steps_n=int(steps_n), mode=mode)
@@ -275,14 +281,14 @@ def run_meta_agent(
             final_txt= report.get("final_text", "")
             trace_obj= out.get("trace", {})
 
-        # 3) grafi (če je trace)
+        # 3) grafi (ÄŤe je trace)
         df_phi = df_dphi = None
         if trace_obj:
             field = ISMField(ISMConfig(alpha=float(alpha), use_log_time=True)).fit(trace_obj)
             Phi  = field.signal(); dPhi = field.dphi()
             x = list(range(1, len(Phi)+1))
-            df_phi  = pd.DataFrame({"x": x, "Φ(t)":  [float(v) for v in Phi]})
-            df_dphi = pd.DataFrame({"x": x, "∂Φ/∂t": [float(v) for v in dPhi]})
+            df_phi  = pd.DataFrame({"x": x, "Î¦(t)":  [float(v) for v in Phi]})
+            df_dphi = pd.DataFrame({"x": x, "â‚Î¦/â‚t": [float(v) for v in dPhi]})
 
         # 4) izvoz
         trace_path  = _tmp_write(json.dumps(trace_obj or {}, ensure_ascii=False, indent=2), "agent_trace.json")
@@ -325,7 +331,7 @@ def run_meta_ask(
 
         hm  = HarmonicMeta(meta=meta, flt=flt, memory_path="memory.jsonl")
         out = hm.ask(task, depth=1, reflect=True, use_memory=bool(use_memory))
-        res = out["result"]  # <— harmoniziran rezultat
+        res = out["result"]  # <â€” harmoniziran rezultat
 
         steps     = res.get("steps", [])
         critic    = res.get("critic", "")
@@ -340,8 +346,8 @@ def run_meta_ask(
             field = ISMField(ISMConfig(alpha=float(alpha), use_log_time=True)).fit(trace)
             Phi = field.signal(); dPhi = field.dphi()
             x = list(range(1, len(Phi)+1))
-            df_phi  = pd.DataFrame({"x": x, "Φ(t)":  [float(v) for v in Phi]})
-            df_dphi = pd.DataFrame({"x": x, "∂Φ/∂t": [float(v) for v in dPhi]})
+            df_phi  = pd.DataFrame({"x": x, "Î¦(t)":  [float(v) for v in Phi]})
+            df_dphi = pd.DataFrame({"x": x, "â‚Î¦/â‚t": [float(v) for v in dPhi]})
 
         trace_path  = _tmp_write(json.dumps(trace, ensure_ascii=False, indent=2), "meta_trace.json")
         report_path = _tmp_write(json.dumps(out,   ensure_ascii=False, indent=2), "meta_report.json")
@@ -366,8 +372,8 @@ def run_meta_ask(
 # ---- UI ----------------------------------------------------------------------
 
 def main():
-    with gr.Blocks(title="Harmonic RSI â€” All-in-one (with Meta-Agent)") as demo:
-        gr.Markdown("# Harmonic RSI â€” All-in-one (with Meta-Agent)")
+    with gr.Blocks(title="Harmonic RSI Ă˘â‚¬â€ť All-in-one (with Meta-Agent)") as demo:
+        gr.Markdown("# Harmonic RSI Ă˘â‚¬â€ť All-in-one (with Meta-Agent)")
 
         # ===================== TAB 1: Evaluate =====================
         with gr.Tab("Evaluate"):
@@ -388,10 +394,10 @@ def main():
                 steps_out = gr.Code(label="Steps")
             with gr.Row():
                 rsi_out = gr.Code(label="RSI result")
-                ism_out = gr.Code(label="ISM phase (Ď‰, Ď†, RÂ˛)")
+                ism_out = gr.Code(label="ISM phase (ÄŽâ€°, ÄŽâ€ , RĂ‚Ë›)")
             with gr.Row():
-                plot_phi  = gr.LinePlot(x="x", y="Î¦(t)",  label="Î¦(t)")
-                plot_dphi = gr.LinePlot(x="x", y="â‚Î¦/â‚t", label="â‚Î¦/â‚t")
+                plot_phi  = gr.LinePlot(x="x", y="ĂŽÂ¦(t)",  label="ĂŽÂ¦(t)")
+                plot_dphi = gr.LinePlot(x="x", y="Ă˘Ââ€šĂŽÂ¦/Ă˘Ââ€št", label="Ă˘Ââ€šĂŽÂ¦/Ă˘Ââ€št")
             trace_dl  = gr.File(label="Download trace.json (generated)")
             report_dl = gr.File(label="Download report.json")
 
@@ -419,15 +425,15 @@ def main():
                 alpha2     = gr.Slider(0.02, 0.20, value=0.08, step=0.01, label="alpha (baseline)")
 
             with gr.Row():
-                adaptive_cb  = gr.Checkbox(value=False, label="Adaptive mode (tune Î±, Ď‰)")
+                adaptive_cb  = gr.Checkbox(value=False, label="Adaptive mode (tune ĂŽÂ±, ÄŽâ€°)")
                 cycles       = gr.Slider(1, 6,   value=3,  step=1,     label="Cycles")
-                alpha_min    = gr.Slider(0.02, 0.30, value=0.04, step=0.01,  label="Î± min")
-                alpha_max    = gr.Slider(0.02, 0.30, value=0.16, step=0.01,  label="Î± max")
-                alpha_step   = gr.Slider(0.005,0.05, value=0.02, step=0.005, label="Î± step")
+                alpha_min    = gr.Slider(0.02, 0.30, value=0.04, step=0.01,  label="ĂŽÂ± min")
+                alpha_max    = gr.Slider(0.02, 0.30, value=0.16, step=0.01,  label="ĂŽÂ± max")
+                alpha_step   = gr.Slider(0.005,0.05, value=0.02, step=0.005, label="ĂŽÂ± step")
             with gr.Row():
-                omega_min    = gr.Slider(2.0, 12.0, value=4.0, step=0.1, label="Ď‰ min")
-                omega_max    = gr.Slider(2.0, 12.0, value=9.5, step=0.1, label="Ď‰ max")
-                omega_steps  = gr.Slider(3, 16, value=6, step=1, label="Ď‰ steps")
+                omega_min    = gr.Slider(2.0, 12.0, value=4.0, step=0.1, label="ÄŽâ€° min")
+                omega_max    = gr.Slider(2.0, 12.0, value=9.5, step=0.1, label="ÄŽâ€° max")
+                omega_steps  = gr.Slider(3, 16, value=6, step=1, label="ÄŽâ€° steps")
                 target       = gr.Dropdown(choices=["maximize_rsig","maximize_r2","maximize_rsi"], value="maximize_rsig", label="Target")
 
             #--- Meta-Agent UI (znotraj with gr.Tab("Meta-Agent"): ...) ---
@@ -443,26 +449,26 @@ def main():
                 steps2_out  = gr.Code(label="Agent Steps")
                 critic_out  = gr.Code(label="Critic Notes")
 
-            # >>> USTVARI FINAL_OUT PREDEN GA UPORABIŠ V outputs
-            with gr.Accordion("🧠 Final Answer", open=True):
+            # >>> USTVARI FINAL_OUT PREDEN GA UPORABIĹ  V outputs
+            with gr.Accordion("đź§  Final Answer", open=True):
                 final_out = gr.Markdown(label="Final Answer", value="")
 
             with gr.Row():
                 rsi2_out = gr.Code(label="RSI result")
-                ism2_out = gr.Code(label="ISM phase (ω, φ, R²)")
+                ism2_out = gr.Code(label="ISM phase (Ď‰, Ď†, RÂ˛)")
             with gr.Row():
-                plot_phi2  = gr.LinePlot(x="x", y="Φ(t)",  label="Φ(t)")
-                plot_dphi2 = gr.LinePlot(x="x", y="∂Φ/∂t", label="∂Φ/∂t")
+                plot_phi2  = gr.LinePlot(x="x", y="Î¦(t)",  label="Î¦(t)")
+                plot_dphi2 = gr.LinePlot(x="x", y="â‚Î¦/â‚t", label="â‚Î¦/â‚t")
             trace2_dl  = gr.File(label="Download agent_trace.json")
             report2_dl = gr.File(label="Download agent_report.json")
 
             # (opcijsko) memory panel
-            with gr.Accordion("🧠 Memory (recent context)", open=False):
+            with gr.Accordion("đź§  Memory (recent context)", open=False):
                 memory_box   = gr.Textbox(label="Previous memory", interactive=False, lines=5)
                 use_mem_cb   = gr.Checkbox(value=False, label="Use memory as context for next question")
                 clear_mem_btn= gr.Button("Clear memory")
 
-            # --- Run Agent: klik (zdaj `final_out` že obstaja)
+            # --- Run Agent: klik (zdaj `final_out` Ĺľe obstaja)
             run_agent_btn.click(
                 fn=run_meta_agent,
                 inputs=[

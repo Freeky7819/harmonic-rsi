@@ -1,3 +1,9 @@
+﻿# ------------------------------------------------------------------------------
+# Harmonic RSI — Research Edition (v0.2.0)
+# Licensed under CC BY-NC 4.0 (non-commercial use only)
+# © Damjan Žakelj 2025 — Harmonic Logos / ISM-X Framework
+# ------------------------------------------------------------------------------
+
 
 from __future__ import annotations
 import os, requests

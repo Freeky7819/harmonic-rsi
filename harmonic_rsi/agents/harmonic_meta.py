@@ -1,3 +1,9 @@
+﻿# ------------------------------------------------------------------------------
+# Harmonic RSI — Research Edition (v0.2.0)
+# Licensed under CC BY-NC 4.0 (non-commercial use only)
+# © Damjan Žakelj 2025 — Harmonic Logos / ISM-X Framework
+# ------------------------------------------------------------------------------
+
 
 # harmonic_rsi/harmonic_meta.py
 from __future__ import annotations
@@ -132,7 +138,7 @@ class HarmonicMeta:
 
     def ask(self, task: str, depth: int = 1, reflect: bool = True, **_ignored) -> Dict[str, Any]:
         """
-        **_ignored požre dodatne parametre iz UI (npr. use_memory, memory_text),
+        **_ignored poĹľre dodatne parametre iz UI (npr. use_memory, memory_text),
         da se izognemo 'unexpected keyword argument'.
         """
         history = self.mem.last_k(5)
@@ -146,7 +152,7 @@ class HarmonicMeta:
             base_raw = self._run_baseline(task)
             base     = self._normalize_out(base_raw)
 
-            # adaptive (če vklopljeno)
+            # adaptive (ÄŤe vklopljeno)
             adapt = None
             if self.cfg.use_adaptive:
                 adapt_raw = self._run_adaptive(task)
@@ -162,10 +168,10 @@ class HarmonicMeta:
             critic = report.get("critic", "") or ""
             final  = (report.get("final_text", "") or "").strip()
 
-            # fallback, če agent ne vrne final_text
+            # fallback, ÄŤe agent ne vrne final_text
             if not final and steps:
                 try:
-                    sys = {"role":"system","content":"You are a clear, precise explainer. Answer in 5–8 sentences for a layperson."}
+                    sys = {"role":"system","content":"You are a clear, precise explainer. Answer in 5â€“8 sentences for a layperson."}
                     usr = {"role":"user","content": "Question: " + task + "\nPlan:\n- " + "\n- ".join(steps)}
                     final = (self.prov.chat([sys, usr]) or "").strip()
                 except Exception:
@@ -186,7 +192,7 @@ class HarmonicMeta:
                                   float((best or {"rsi":{}})["rsi"].get("resonance_signature", 0.0))):
                 best = cand
 
-            # reflection, če filter pade
+            # reflection, ÄŤe filter pade
             if reflect and not accepted and final:
                 sys = {"role":"system","content":"Rewrite the final answer more clearly and precisely for a layperson; keep it concise."}
                 usr = {"role":"user","content": f"Task: {task}\n\nCurrent final answer:\n{final}\n\nNotes:\n{critic}\n\n{meta_note}"}

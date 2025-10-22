@@ -1,3 +1,14 @@
+﻿# ------------------------------------------------------------------------------
+# Harmonic RSI â€” Research Edition (v0.2.0)
+# Licensed under CC BY-NC 4.0 (non-commercial use only)
+# Â© Damjan Ĺ˝akelj 2025 â€” Harmonic Logos / ISM-X Framework
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# Harmonic RSI â€” Research Edition (v0.2.0)
+# Licensed under CC BY-NC 4.0 (non-commercial use only)
+# Â© Freedom (Damjan Ĺ˝akelj) 2025 â€” Harmonic Logos / ISM-X Framework
+# ------------------------------------------------------------------------------
+
 
 def test_import_core():
     import harmonic_rsi

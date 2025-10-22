@@ -1,9 +1,25 @@
 
-# Harmonic RSI — open‑core
+# Harmonic RSI — open-core (Research Edition)
 
-Measure *resonance* and *stability* in reasoning traces (RSI), with an optional ISM Φ‑layer (phase ω, φ, R²) and Meta‑Agent orchestration.
-**Status:** MVP v0.2.0 (Gradio UI + Agents + CLI).  
-**License:** Apache‑2.0 © Freedom (Damjan) — Harmonic Logos
+**Version:** 0.2.0  
+**Author:** Damjan Žakelj (Harmonic Logos / ISM-X Framework)  
+**License:** CC BY-NC 4.0 — free for research, education and personal non-commercial use  
+
+---
+
+### About
+Harmonic RSI measures resonance and stability in reasoning agents.  
+This *Research Edition* provides the open-core modules and meta-agent layer under a non-commercial license.  
+Commercial or enterprise deployment requires written permission from the author.
+
+---
+
+### License
+Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)  
+Use for research, education and personal projects is free.  
+Commercial or enterprise use requires written permission from the author.
+
+Full text: https://creativecommons.org/licenses/by-nc/4.0/
 
 ## Quick Start (Windows PowerShell)
 ```powershell
