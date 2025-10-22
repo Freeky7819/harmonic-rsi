@@ -44,7 +44,7 @@ python -m harmonic_rsi.app_gradio
 ## Agents CLI
 ```powershell
 # OpenAI
-python -m harmonic_rsi.agents.run_agent --task "Zakaj je nebo modro?" --provider openai
+python -m harmonic_rsi.agents.run_agent --task "Why is the sky blue?" --provider openai
 
 # Ollama
 python -m harmonic_rsi.agents.run_agent --task "Why is the sky blue?" --provider ollama --ollama_url http://localhost:11434
