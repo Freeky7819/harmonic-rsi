@@ -20,7 +20,7 @@ from harmonic_rsi import ISMField, ISMConfig, ResonanceEvaluator, ResonanceParam
 # ---- helpers -----------------------------------------------------------------
 
 def _synth_critic(res: dict, est: dict, steps: list[str]) -> str:
-    """ÄŚe agent ne vrne kritike, jo naredimo iz metrik in korakov."""
+    """Če agent ne vrne kritike, jo naredimo iz metrik in korakov."""
     rsi   = float(res.get("resonance_score", 0.0))
     rsig  = float(res.get("resonance_signature", 0.0))
     drift = float(res.get("phase_drift", 1.0))
@@ -29,11 +29,11 @@ def _synth_critic(res: dict, est: dict, steps: list[str]) -> str:
 
     notes = []
     notes.append(f"*RSIG={rsig:.3f}, RÂ˛={r2:.3f}, RSI={rsi:.3f}, DRIFT={drift:.3f}, COH={coh:.3f}*")
-    if rsig < 0.60: notes.append("- PoveÄŤaj semantiÄŤno konsistenco med koraki (prehodni stavki, manj topic skokov).")
-    if r2   < 0.60: notes.append("- Fazna ocena ni stabilna â†’ poskusi manj korakov ali drugaÄŤen red.")
-    if rsi  < 0.55: notes.append("- Koraki so premalo resonantni â†’ bolj konkretne, manj â€śmehkeâ€ť akcije.")
-    if drift> 0.70: notes.append("- Prevelik DRIFT â†’ koraki naj bodo bolj medsebojno odvisni.")
-    if coh  < 0.50: notes.append("- COH nizka â†’ dodaj povzetke med koraki, da drĹľiĹˇ rdeÄŤo nit.")
+    if rsig < 0.60: notes.append("- Povečaj semantično konsistenco med koraki (prehodni stavki, manj topic skokov).")
+    if r2   < 0.60: notes.append("- Fazna ocena ni stabilna -> poskusi manj korakov ali drugačen red.")
+    if rsi  < 0.55: notes.append("- Koraki so premalo resonantni -> bolj konkretne, manj â€śmehkeâ€ť akcije.")
+    if drift> 0.70: notes.append("- Prevelik DRIFT -> koraki naj bodo bolj medsebojno odvisni.")
+    if coh  < 0.50: notes.append("- COH nizka -> dodaj povzetke med koraki, da drĹľiĹˇ rdečo nit.")
     if steps:
         notes.append("- Kritika korakov:")
         for i, s in enumerate(steps[:6], 1):
@@ -42,11 +42,11 @@ def _synth_critic(res: dict, est: dict, steps: list[str]) -> str:
     
 
 def _synth_final(steps: list[str]) -> str:
-    """ÄŚe agent ne vrne finalnega odgovora, naredimo kratek â€śexecutive summaryâ€ť iz korakov."""
+    """Če agent ne vrne finalnega odgovora, naredimo kratek â€śexecutive summaryâ€ť iz korakov."""
     if not steps:
         return "No final answer."
     bullets = "\n".join(f"- {s}" for s in steps[:10])
-    return f"**Summary (auto):**\n{bullets}\n\n*(Auto-synth zaradi manjkajoÄŤega final_text v agentovem izhodu.)*"
+    return f"**Summary (auto):**\n{bullets}\n\n*(Auto-synth zaradi manjkajočega final_text v agentovem izhodu.)*"
 
 
 def _badge_html(label: str, color: str, res: dict, est: dict) -> str:
@@ -62,7 +62,7 @@ def _badge_html(label: str, color: str, res: dict, est: dict) -> str:
     )
     nums = (
         f'<div style="margin-top:6px;font-family:monospace">'
-        f'RSIG={rsig:.3f} Ă‚Â· RĂ‚Ë›={r2:.3f} Ă‚Â· RSI={rsi:.3f} Ă‚Â· DRIFT={drift:.3f} Ă‚Â· COH={coh:.3f}'
+        f'RSIG={rsig:.3f} · R²={r2:.3f} · RSI={rsi:.3f} · DRIFT={drift:.3f} · COH={coh:.3f}'
         f'</div>'
     )
     return pill + nums
@@ -83,14 +83,14 @@ def classify_stability(res: dict, est: dict) -> str:
 
 def _eval_trace(steps: list[str], emb: np.ndarray, mode: str = "resonant"):
     """
-    Skupna pot: ISM fit â†’ ocena faze â†’ RSI â†’ DataFrame za grafa.
+    Skupna pot: ISM fit -> ocena faze -> RSI -> DataFrame za grafa.
     steps: seznam korakov (N)
     emb:   matrika embeddingov oblike (N, D)
     """
     # 1) zgradi minimalni trace, ki ga ISMField zna prebrati
     trace = {
         "steps": steps,
-        "final_text": "",                   # v Evaluate nimamo konÄŤnega odgovora
+        "final_text": "",                   # v Evaluate nimamo končnega odgovora
         "embeddings": emb.tolist(),         # numpy -> list (json-serializable)
     }
 
@@ -98,8 +98,8 @@ def _eval_trace(steps: list[str], emb: np.ndarray, mode: str = "resonant"):
     cfg = ISMConfig(alpha=0.08, use_log_time=True)
     field = ISMField(cfg).fit(trace)
     est = field.estimate_phase()           # dict z "omega", "phi", "r2"
-    Phi = field.signal()                   # Î¦(t)
-    dPhi = field.dphi()                    # â‚Î¦/â‚t
+    Phi = field.signal()                   # Φ(t)
+    dPhi = field.dphi()                    # ∂Φ/∂t
 
     # 3) RSI ocena
     ev = ResonanceEvaluator()
@@ -111,8 +111,8 @@ def _eval_trace(steps: list[str], emb: np.ndarray, mode: str = "resonant"):
 
     # 4) podatki za grafa
     x = list(range(1, len(Phi) + 1))
-    df_phi  = pd.DataFrame({"x": x, "Î¦(t)":  [float(v) for v in Phi]})
-    df_dphi = pd.DataFrame({"x": x, "â‚Î¦/â‚t": [float(v) for v in dPhi]})
+    df_phi  = pd.DataFrame({"x": x, "Φ(t)":  [float(v) for v in Phi]})
+    df_dphi = pd.DataFrame({"x": x, "∂Φ/∂t": [float(v) for v in dPhi]})
 
     return res, est, df_phi, df_dphi, trace
 
@@ -128,7 +128,7 @@ def _tmp_write(text: str, fname: str) -> str|None:
 # ---- Evaluate tab (Prompt Ă˘â€ â€™ GPT Ă˘â€ â€™ Embeddings Ă˘â€ â€™ ISM Ă˘â€ â€™ RSI) --------------------
 
 def _openai_steps(api_key: str, chat_model: str, steps_n: int, prompt: str) -> list[str]:
-    """Vrne numbered korake (brez verige razmiÄąË‡ljanja)."""
+    """Vrne numbered korake (brez verige razmišljanja)."""
     from openai import OpenAI
     client = OpenAI(api_key=api_key)
 
@@ -196,7 +196,7 @@ def run_from_prompt(api_key, chat_model, emb_model, steps_n, user_prompt, mode):
         trace_path  = _tmp_write(trace_json,  "trace.json")
         report_path = _tmp_write(report_json, "report.json")
 
-        # 5. DiagnostiÄŤni izpisi
+        # 5. Diagnostični izpisi
         diag_html = classify_stability(res, est)
         steps_txt = "\n".join(f"{i+1}. {s}" for i, s in enumerate(steps))
 
@@ -267,7 +267,7 @@ def run_meta_agent(
             res       = block.get("rsi", {})
             est       = block.get("ism_phase", {})
             critic    = out.get("critic", "")            # <-- pri adaptivu je kritik na top-level
-            final_txt = ""                               # adaptive obiÄŤajno ne vrne final_text
+            final_txt = ""                               # adaptive običajno ne vrne final_text
             trace_obj = out.get("trace", {})
         else:
             agent = ResearcherAgent(prov, steps_n=int(steps_n), mode=mode)
@@ -281,14 +281,14 @@ def run_meta_agent(
             final_txt= report.get("final_text", "")
             trace_obj= out.get("trace", {})
 
-        # 3) grafi (ÄŤe je trace)
+        # 3) grafi (če je trace)
         df_phi = df_dphi = None
         if trace_obj:
             field = ISMField(ISMConfig(alpha=float(alpha), use_log_time=True)).fit(trace_obj)
             Phi  = field.signal(); dPhi = field.dphi()
             x = list(range(1, len(Phi)+1))
-            df_phi  = pd.DataFrame({"x": x, "Î¦(t)":  [float(v) for v in Phi]})
-            df_dphi = pd.DataFrame({"x": x, "â‚Î¦/â‚t": [float(v) for v in dPhi]})
+            df_phi  = pd.DataFrame({"x": x, "Φ(t)":  [float(v) for v in Phi]})
+            df_dphi = pd.DataFrame({"x": x, "∂Φ/∂t": [float(v) for v in dPhi]})
 
         # 4) izvoz
         trace_path  = _tmp_write(json.dumps(trace_obj or {}, ensure_ascii=False, indent=2), "agent_trace.json")
@@ -346,8 +346,8 @@ def run_meta_ask(
             field = ISMField(ISMConfig(alpha=float(alpha), use_log_time=True)).fit(trace)
             Phi = field.signal(); dPhi = field.dphi()
             x = list(range(1, len(Phi)+1))
-            df_phi  = pd.DataFrame({"x": x, "Î¦(t)":  [float(v) for v in Phi]})
-            df_dphi = pd.DataFrame({"x": x, "â‚Î¦/â‚t": [float(v) for v in dPhi]})
+            df_phi  = pd.DataFrame({"x": x, "Φ(t)":  [float(v) for v in Phi]})
+            df_dphi = pd.DataFrame({"x": x, "∂Φ/∂t": [float(v) for v in dPhi]})
 
         trace_path  = _tmp_write(json.dumps(trace, ensure_ascii=False, indent=2), "meta_trace.json")
         report_path = _tmp_write(json.dumps(out,   ensure_ascii=False, indent=2), "meta_report.json")
@@ -394,7 +394,7 @@ def main():
                 steps_out = gr.Code(label="Steps")
             with gr.Row():
                 rsi_out = gr.Code(label="RSI result")
-                ism_out = gr.Code(label="ISM phase (ÄŽâ€°, ÄŽâ€ , RĂ‚Ë›)")
+                ism_out = gr.Code(label="ISM phase (ÄŽâ€°, ÄŽâ€ , R²)")
             with gr.Row():
                 plot_phi  = gr.LinePlot(x="x", y="ĂŽÂ¦(t)",  label="ĂŽÂ¦(t)")
                 plot_dphi = gr.LinePlot(x="x", y="Ă˘Ââ€šĂŽÂ¦/Ă˘Ââ€št", label="Ă˘Ââ€šĂŽÂ¦/Ă˘Ââ€št")
@@ -457,8 +457,8 @@ def main():
                 rsi2_out = gr.Code(label="RSI result")
                 ism2_out = gr.Code(label="ISM phase (Ď‰, Ď†, RÂ˛)")
             with gr.Row():
-                plot_phi2  = gr.LinePlot(x="x", y="Î¦(t)",  label="Î¦(t)")
-                plot_dphi2 = gr.LinePlot(x="x", y="â‚Î¦/â‚t", label="â‚Î¦/â‚t")
+                plot_phi2  = gr.LinePlot(x="x", y="Φ(t)",  label="Φ(t)")
+                plot_dphi2 = gr.LinePlot(x="x", y="∂Φ/∂t", label="∂Φ/∂t")
             trace2_dl  = gr.File(label="Download agent_trace.json")
             report2_dl = gr.File(label="Download agent_report.json")
 
