@@ -4,23 +4,17 @@
 # © Damjan Žakelj 2025 — Harmonic Logos / ISM-X Framework
 # ------------------------------------------------------------------------------
 
-# harmonic_rsi/agents/__init__.py
+# harmonic_rsi/__init__.py
 
-from .providers import OpenAIProvider, OllamaProvider
-from .researcher import ResearcherAgent
-from .adaptive import AdaptiveResearcherAgent, AdaptConfig
-from .harmonic_meta import HarmonicMeta, MetaConfig, FilterConfig
+from .rsi import ResonanceEvaluator, ResonanceParams
+from .ism_field import ISMField, ISMConfig
 
-# Critic je opcijski (ÄŤe ga imaĹˇ v base.py â€“ super; ÄŤe ga ni, UI ne pade)
+__all__ = ["ResonanceEvaluator", "ResonanceParams", "ISMField", "ISMConfig"]
+
+# Optional providers – only if available; not required for RSI/ISM tests
 try:
-    from .base import Critic  # noqa: F401
+    from .agents.providers import OpenAIProvider, OllamaProvider
+    __all__ += ["OpenAIProvider", "OllamaProvider"]
 except Exception:
-    Critic = None  # type: ignore
-
-__all__ = [
-    "OpenAIProvider", "OllamaProvider",
-    "ResearcherAgent",
-    "AdaptiveResearcherAgent", "AdaptConfig",
-    "HarmonicMeta", "MetaConfig", "FilterConfig",
-    # "Critic" je opcijski; ga ne navajamo v __all__ namerno
-]
+    # keep package importable even if providers (or deps/keys) are missing
+    pass
